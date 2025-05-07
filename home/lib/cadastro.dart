@@ -38,7 +38,13 @@ class _CadastroState extends State<Cadastro> {
        MaterialPageRoute(builder: (context) => const Login()),
                                   );
     Usuario user1 = Usuario(_nomeController.text, _emailController.text, _senhaController.text);
-    usuarios.add(user1);              
+    usuarios.add(user1); 
+    for(var usuario in usuarios){
+      print("Nome: ${usuario.nome}");
+      print("Email: ${usuario.email}");
+      print("Senha: ${usuario.senha}");
+
+    }         
     }
   }
 
