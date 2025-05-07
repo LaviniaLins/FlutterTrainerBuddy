@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:home/perfil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,6 +12,24 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
+final _emailController = TextEditingController();
+final _senhaController = TextEditingController();
+
+void _login() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+    final senha = prefs.getString('senha');
+
+    if (_emailController.text == email && _senhaController.text == senha) {
+      await prefs.setBool('logado', true);
+      Navigator.push(context, 
+      MaterialPageRoute(builder: (context) => const Perfil()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('E-mail ou senha incorretos')),
+      );
+    }
+  }
 
   
   @override
@@ -17,7 +37,7 @@ class _LoginState extends State<Login> {
   Image logoTB = Image.asset("imagens/logoTB.png");
   Widget build(BuildContext context) {
    return Scaffold(
-     backgroundColor: const Color.fromRGBO(68, 55, 125, 1), 
+     backgroundColor: Color(0xFF41376C), 
      drawer: Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -131,7 +151,7 @@ class _LoginState extends State<Login> {
     children: [
       //cont 1
       Container(
-        margin: const EdgeInsets.only(bottom: 150),
+        margin: const EdgeInsets.only(bottom: 70),
         decoration: const BoxDecoration(
           color: Color(0xFFDFA921),
           borderRadius: BorderRadius.only(
@@ -165,7 +185,7 @@ class _LoginState extends State<Login> {
 
       
       Positioned(
-        bottom: 100,
+        bottom: 50,
         //cont 2
         child: Container(
           decoration: BoxDecoration(
@@ -183,21 +203,33 @@ class _LoginState extends State<Login> {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
-            onPressed: () {},
+            onPressed: () {
+              _login();
+              setState(() {
+                
+              });
+            },
             child: const Text(
               "Login",
               style: TextStyle(color: Colors.black, fontSize: 18),
             ),
-          ),
+          ), 
         ),
       ),
     ],
   ),
 ),
 
-
+Container(
+padding: EdgeInsets.only(bottom: 40),
+  child: Text("Esqueceu a senha?", style:  const TextStyle(
+    color: Colors.black,
+    fontFamily: 'Poppins',),
+))
         ],
+      
       ),
+      
       
            
               

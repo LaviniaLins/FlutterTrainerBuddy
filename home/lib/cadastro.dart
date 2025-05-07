@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:home/login.dart';
+import 'package:home/usuario.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -14,15 +16,44 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
 
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+
+  final _confirmarSenhaController = TextEditingController();
+  final _nomeController = TextEditingController();
+
+  void _cadastrar() async {
+    if (_formKey.currentState!.validate()) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', _emailController.text);
+      await prefs.setString('senha', _senhaController.text);
+      await prefs.setString('nome', _nomeController.text);
+      await prefs.setString('confirmarSenha', _confirmarSenhaController.text);
+      await prefs.setBool('isLoggedIn', false);               
+  
+  
+       Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => const Login()),
+                                  );
+    Usuario user1 = Usuario(_nomeController.text, _emailController.text, _senhaController.text);
+    usuarios.add(user1);              
+    }
+  }
 
 String selectedPage = "";
   Image logoTB = Image.asset("imagens/logoTB.png");
+
+  List<Usuario> usuarios = [];
+
+
   
   @override
   
   Widget build(BuildContext context) {
    return Scaffold(
-     backgroundColor: const Color.fromRGBO(68, 55, 125, 1), 
+     backgroundColor: Color(0xFF41376C),
      drawer: Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -63,7 +94,7 @@ String selectedPage = "";
   ),
       body: Stack(
   children: [
-   
+   /*
     Positioned.fill(
    
       child: Opacity(
@@ -74,7 +105,7 @@ String selectedPage = "";
         ),
       ),
     ),
-
+*/
     
     SafeArea(
       child: Column(
@@ -131,8 +162,10 @@ String selectedPage = "";
 
           // Área do formulário
           Expanded(
+            child: Form( 
+              key: _formKey,
             child: Container(
-              margin: const EdgeInsets.only(top: 100),
+              margin: const EdgeInsets.only(top: 85),
               decoration: const BoxDecoration(
                 color: Color(0xFFDFA921),
                 borderRadius: BorderRadius.only(
@@ -145,13 +178,39 @@ String selectedPage = "";
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    campoDeTexto("Nome:", Icons.person),
+                    
+                    campoDeTexto("Nome:", Icons.person, controller: _nomeController, validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, insira seu nome.';
+                      }
+                      return null;
+                    }),
                     const SizedBox(height: 15),
-                    campoDeTexto("Email:", Icons.email),
+                    campoDeTexto("Email:", Icons.email, controller: _emailController, validator: (value){
+                      if (value == null || value.isEmpty) {
+                         
+                        return 'Por favor, insira seu email.';
+                      } else if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                        return "email inválido";
+                      }
+                      return null;
+                    }),
                     const SizedBox(height: 15),
-                    campoDeTexto("Senha:", Icons.lock, isPassword: true),
+                    campoDeTexto("Senha:", Icons.lock, isPassword: true, controller: _senhaController, validator: (value){
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, insira sua senha.';
+                      } 
+                      return null;
+                    }),
                     const SizedBox(height: 15),
-                    campoDeTexto("Confirme sua senha:", Icons.lock, isPassword: true),
+                    campoDeTexto("Confirme sua senha:", Icons.lock, isPassword: true, controller: _confirmarSenhaController, validator: (value){
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, confirme sua senha.';
+                      } else if (value != _senhaController.text) {
+                        return 'As senhas não coincidem.';
+                      }
+                      return null;
+                    }),
                     const SizedBox(height: 30),
 
                     Center(
@@ -165,7 +224,29 @@ String selectedPage = "";
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                            final form = _formKey.currentState;
+                          print("Nome: ${_nomeController.text}");
+                          print("Email: ${_emailController.text}");
+                          print("Senha: ${_senhaController.text}");
+                          print("Confirmar: ${_confirmarSenhaController.text}");
+
+
+                            if(form != null && form.validate()){
+                              _cadastrar();
+                              
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Preencha todos os campos corretamente!"),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                          setState(() {
+                            
+                          });
+                        },
                         child: const Text(
                           "Cadastrar",
                           style: TextStyle(color: Colors.black, fontSize: 18),
@@ -193,6 +274,7 @@ String selectedPage = "";
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             )
                           ],
@@ -202,7 +284,7 @@ String selectedPage = "";
                   ],
                 ),
               ),
-            ),
+            ),),
           ),
         ],
       ),
@@ -213,7 +295,7 @@ String selectedPage = "";
   }
 
  
-  Widget campoDeTexto(String label, IconData icon, {bool isPassword = false}) {
+  Widget campoDeTexto(String label, IconData icon, {bool isPassword = false, TextEditingController? controller, String? Function(String?)? validator}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -230,8 +312,12 @@ String selectedPage = "";
           decoration: BoxDecoration(
             color:const Color.fromRGBO(68, 55, 125, 1),
             borderRadius: BorderRadius.circular(30),
+            
           ),
           child: TextFormField(
+            controller: controller,
+            validator: validator,
+
             obscureText: isPassword,
             style: const TextStyle(color:Color(0xFFDFA921)),
             decoration: InputDecoration(
