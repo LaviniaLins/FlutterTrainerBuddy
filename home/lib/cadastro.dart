@@ -35,7 +35,7 @@ class _CadastroState extends State<Cadastro> {
   
        Navigator.push(
        context,
-       MaterialPageRoute(builder: (context) => const Login()),
+       MaterialPageRoute(builder: (context) => const Login(List: Usuario,)),
                                   );
     Usuario user1 = Usuario(_nomeController.text, _emailController.text, _senhaController.text);
     usuarios.add(user1); 
@@ -274,7 +274,7 @@ String selectedPage = "";
                                 ..onTap = () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const Login()),
+                                    MaterialPageRoute(builder: (context) => const Login(List: Usuario)),
                                   );
                                 },
                               style: const TextStyle(
@@ -325,15 +325,25 @@ String selectedPage = "";
             validator: validator,
 
             obscureText: isPassword,
+            
             style: const TextStyle(color:Color(0xFFDFA921)),
             decoration: InputDecoration(
+             
               prefixIcon: Icon(icon, color: Colors.black),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 15),
-            ),
+            errorStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            height: 0.9,
+          ),
+            
           ),
         ),
+        )
+        
       ],
     );
   }
+  
 }

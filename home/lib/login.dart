@@ -4,7 +4,7 @@ import 'package:home/perfil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({super.key, required Type List});
 
   @override
   State<Login> createState() => _LoginState();
@@ -14,7 +14,7 @@ class _LoginState extends State<Login> {
 
 final _emailController = TextEditingController();
 final _senhaController = TextEditingController();
-
+/*
 void _login() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('email');
@@ -29,7 +29,7 @@ void _login() async {
         SnackBar(content: Text('E-mail ou senha incorretos')),
       );
     }
-  }
+  }*/
 
   
   @override
@@ -204,10 +204,15 @@ void _login() async {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
             onPressed: () {
-              _login();
-              setState(() {
-                
-              });
+            
+         Navigator.push(
+           context,
+            MaterialPageRoute(builder: (context) => const Perfil()),
+            );
+            setState(() {
+              
+            });
+                                
             },
             child: const Text(
               "Login",
