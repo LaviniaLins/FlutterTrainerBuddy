@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:home/login.dart';
 import 'package:home/usuario.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 
 
@@ -23,30 +24,40 @@ class _CadastroState extends State<Cadastro> {
   final _confirmarSenhaController = TextEditingController();
   final _nomeController = TextEditingController();
 
-  void _cadastrar() async {
-    if (_formKey.currentState!.validate()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('email', _emailController.text);
-      await prefs.setString('senha', _senhaController.text);
-      await prefs.setString('nome', _nomeController.text);
-      await prefs.setString('confirmarSenha', _confirmarSenhaController.text);
-      await prefs.setBool('isLoggedIn', false);               
-  
-  
-       Navigator.push(
-       context,
-       MaterialPageRoute(builder: (context) => const Login(List: Usuario,)),
-                                  );
-    Usuario user1 = Usuario(_nomeController.text, _emailController.text, _senhaController.text);
-    usuarios.add(user1); 
-    for(var usuario in usuarios){
-      print("Nome: ${usuario.nome}");
-      print("Email: ${usuario.email}");
-      print("Senha: ${usuario.senha}");
+ 
+void _cadastrar() async {
+  if (_formKey.currentState!.validate()) {
+    final prefs = await SharedPreferences.getInstance();
 
-    }         
+    
+    final List<String> usuarios = prefs.getStringList('usuarios') ?? [];
+
+   
+    final novoUsuario = jsonEncode({
+      'nome': _nomeController.text,
+      'email': _emailController.text,
+      'senha': _senhaController.text,
+    });
+
+    
+    usuarios.add(novoUsuario);
+    await prefs.setStringList('usuarios', usuarios);
+
+    //console
+    for (var user in usuarios) {
+      final dados = jsonDecode(user) as Map<String, dynamic>;
+      print('----');
+      print('Nome:  ${dados['nome']}');
+      print('Email: ${dados['email']}');
     }
+
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Login()),
+    );
   }
+}
 
 String selectedPage = "";
   Image logoTB = Image.asset("imagens/logoTB.png");
@@ -274,7 +285,7 @@ String selectedPage = "";
                                 ..onTap = () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const Login(List: Usuario)),
+                                    MaterialPageRoute(builder: (context) => const Login()),
                                   );
                                 },
                               style: const TextStyle(
@@ -301,49 +312,58 @@ String selectedPage = "";
   }
 
  
-  Widget campoDeTexto(String label, IconData icon, {bool isPassword = false, TextEditingController? controller, String? Function(String?)? validator}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+ Widget campoDeTexto(
+  String label,
+  IconData icon, {
+  bool isPassword = false,
+  TextEditingController? controller,
+  String? Function(String?)? validator,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
-        const SizedBox(height: 5),
-        Container(
-          decoration: BoxDecoration(
-            color:const Color.fromRGBO(68, 55, 125, 1),
-            borderRadius: BorderRadius.circular(30),
-            
-          ),
-          child: TextFormField(
-            controller: controller,
-            validator: validator,
+      ),
+      const SizedBox(height: 5),
 
-            obscureText: isPassword,
-            
-            style: const TextStyle(color:Color(0xFFDFA921)),
-            decoration: InputDecoration(
-             
-              prefixIcon: Icon(icon, color: Colors.black),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 15),
-            errorStyle: const TextStyle(
+      
+      TextFormField(
+        controller: controller,
+        validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onChanged: (_) => setState(() {}),
+        obscureText: isPassword,
+        style: const TextStyle(color: Color(0xFFDFA921)),
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.black),
+
+          
+          filled: true,
+          fillColor: const Color.fromRGBO(68, 55, 125, 1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
+          ),
+
+          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          errorStyle: const TextStyle(
             color: Colors.black,
             fontSize: 12,
-            height: 0.9,
-          ),
-            
           ),
         ),
-        )
-        
-      ],
-    );
-  }
+      ),
+
+      
+      const SizedBox(height: 8),
+    ],
+  );
+}
+
   
 }

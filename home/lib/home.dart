@@ -117,7 +117,7 @@ Stack(
               onTap:(){
                 Navigator.push(
                   context,
-                   MaterialPageRoute(builder: (context) => const Login(List: Usuario,)),
+                   MaterialPageRoute(builder: (context) => const Login()),
 
                 );
               },

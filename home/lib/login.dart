@@ -4,7 +4,7 @@ import 'package:home/perfil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key, required Type List});
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -14,25 +14,47 @@ class _LoginState extends State<Login> {
 
 final _emailController = TextEditingController();
 final _senhaController = TextEditingController();
-/*
-void _login() async {
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
-    final senha = prefs.getString('senha');
 
-    if (_emailController.text == email && _senhaController.text == senha) {
-      await prefs.setBool('logado', true);
-      Navigator.push(context, 
-      MaterialPageRoute(builder: (context) => const Perfil()));
+   @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fazerLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedEmail = prefs.getString('email');
+    final storedSenha = prefs.getString('senha');
+
+    if (_emailController.text == storedEmail &&
+        _senhaController.text == storedSenha) {
+      // marca como logado
+      await prefs.setBool('isLoggedIn', true);
+
+      // substitui a rota de login para não voltar
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Perfil()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('E-mail ou senha incorretos')),
+        const SnackBar(
+          content: Text('E-mail ou senha incorretos'),
+          duration: Duration(seconds: 2),
+        ),
       );
     }
-  }*/
+  }
+
 
   
   @override
+
+
+
+
+
   String selectedPage = "";
   Image logoTB = Image.asset("imagens/logoTB.png");
   Widget build(BuildContext context) {
@@ -173,9 +195,9 @@ void _login() async {
                 ),
               ),
               const SizedBox(height: 25),
-              campoDeTexto("Email:", Icons.email),
+              campoDeTexto("Email:", Icons.email, controller: _emailController),
               const SizedBox(height: 15),
-              campoDeTexto("Senha:", Icons.lock, isPassword: true),
+              campoDeTexto("Senha:", Icons.lock, isPassword: true, controller: _senhaController),
               const SizedBox(height: 40),
               
             ],
@@ -203,24 +225,15 @@ void _login() async {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             ),
-            onPressed: () {
-            
-         Navigator.push(
-           context,
-            MaterialPageRoute(builder: (context) => const Perfil()),
-            );
-            setState(() {
-              
-            });
-                                
-            },
-            child: const Text(
-              "Login",
-              style: TextStyle(color: Colors.black, fontSize: 18),
-            ),
+             onPressed: _fazerLogin,
+                        child: const Text(
+                          "Entrar",
+                          style: TextStyle(color: Colors.black, fontSize: 18),
+                        ),
+                      ),
           ), 
         ),
-      ),
+      
     ],
   ),
 ),
@@ -245,7 +258,7 @@ padding: EdgeInsets.only(bottom: 40),
   }
 
  
-  Widget campoDeTexto(String label, IconData icon, {bool isPassword = false}) {
+  Widget campoDeTexto(String label, IconData icon, {bool isPassword = false,TextEditingController? controller,}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -264,6 +277,7 @@ padding: EdgeInsets.only(bottom: 40),
             borderRadius: BorderRadius.circular(30),
           ),
           child: TextFormField(
+            controller: controller,
             obscureText: isPassword,
             style: const TextStyle(color:Color(0xFFDFA921)),
             decoration: InputDecoration(
