@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:home/perfil.dart';
@@ -21,31 +23,41 @@ final _senhaController = TextEditingController();
     _senhaController.dispose();
     super.dispose();
   }
+Future<void> _fazerLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  final List<String> usuarios = prefs.getStringList('usuarios') ?? [];
 
-  Future<void> _fazerLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedEmail = prefs.getString('email');
-    final storedSenha = prefs.getString('senha');
+  bool loginSucesso = false;
 
-    if (_emailController.text == storedEmail &&
-        _senhaController.text == storedSenha) {
-      // marca como logado
+  for (String usuarioJson in usuarios) {
+    final Map<String, dynamic> usuario = jsonDecode(usuarioJson);
+    
+    if (usuario['email'] == _emailController.text &&
+        usuario['senha'] == _senhaController.text) {
+      loginSucesso = true;
       await prefs.setBool('isLoggedIn', true);
 
-      
+      // Você pode salvar também o nome do usuário logado, se quiser
+      await prefs.setString('nomeLogado', usuario['nome']);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Perfil()),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('E-mail ou senha incorretos'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      break;
     }
   }
+
+  if (!loginSucesso) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('E-mail ou senha incorretos'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+}
+
 
 
   
