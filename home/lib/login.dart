@@ -32,7 +32,7 @@ final _senhaController = TextEditingController();
       // marca como logado
       await prefs.setBool('isLoggedIn', true);
 
-      // substitui a rota de login para não voltar
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Perfil()),
