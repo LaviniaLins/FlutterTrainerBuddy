@@ -1,31 +1,29 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:home/cadastro.dart';
-import 'package:home/classexercicios.dart';
 import 'package:home/equipe.dart';
 import 'package:home/exercicios.dart';
+import 'package:home/home.dart';
 import 'package:home/login.dart';
-import 'package:home/perfil.dart';
 import 'package:home/treinos.dart';
-import 'package:home/usuario.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Perfil extends StatefulWidget {
+  const Perfil({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Perfil> createState() => _PerfilState();
 }
 
-class _HomeState extends State<Home> {
-
-String selectedPage = "";
-  Image logoTB = Image.asset("assets/imagens/logoTB.png");
+class _PerfilState extends State<Perfil> {
   
   @override
+  String selectedPage = "";
+  Image logoTB = Image.asset("assets/imagens/logoTB.png");
   Widget build(BuildContext context) {
-   return Scaffold(
-  backgroundColor: const Color.fromRGBO(68, 55, 125, 1),
-  drawer: Drawer(
+    return Scaffold(
+
+        backgroundColor: Color(0xFF41376C),
+        drawer: Drawer(
       child: Container(
         color: Color(0xFFDFA921), // fundo amarelo
         child: ListView(
@@ -100,118 +98,66 @@ String selectedPage = "";
             _buildTile(Icons.smart_toy, 'IA'),
             
            
-            _buildTile(Icons.info, 'Nossa Equipe'), 
-          ],
-        ),
-      ),
-    ),
-  body: SingleChildScrollView(  child: SafeArea(
-    child: Column(
-      children: [
-        
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Builder( 
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 80,
-                child: logoTB, 
-              ),
-            ],
-          ),
-        ),
-
-        Container(
-         decoration: BoxDecoration(
-          border: Border.all(
-            color: const Color.fromRGBO(68, 55, 125, 1),
-            width: 1.0,
-          )
-         ), 
-          child: Text("Trainer \nBuddy", style: TextStyle(color: const Color.fromRGBO(244, 191, 58, 1), fontSize: 50, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
-        ),
-       SizedBox(height: 40), 
-Stack(
-  alignment: Alignment.center,
-  children: [
-    Image.asset(
-  "assets/imagens/estrela.png",
-  width: 400,
-  height: 400,
-  fit: BoxFit.contain,
-),
-   
-  ],
-),
- Padding(
-        padding: const EdgeInsets.only(top: 35),
-        child: Column(
-          children: [
-            Divider(
-              color: Colors.black,
-              thickness: 1,
+            ListTile(
+              leading: Icon(Icons.info, color: Colors.black,),
+              title: Text('Nossa equipe'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Tela da equipe em construção')),
+                );
+              },
               
             ),
-             GestureDetector(
-              onTap:(){
-                Navigator.push(
-                  context,
-                   MaterialPageRoute(builder: (context) => const Login()),
-
-                );
-              },
-            child: Text(
-              "Entrar",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: 'Poppins',
-              ),
-            ),),
-            Divider(
-              indent: 120,
-              endIndent: 120,
-              thickness: 1,
-              color: Colors.white,
-            ),
-             GestureDetector(
-              onTap:(){
-                Navigator.push(
-                  context,
-                   MaterialPageRoute(builder: (context) => const Cadastro()),
-                );
-              },
-            child:  Text(
-              "Cadastre-se",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: 'Poppins',
-              ),
-            ),),
           ],
         ),
       ),
-      ],
     ),
-  ),)
-);
+  body: Stack(
+    children: [
+     
+         Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
+                ),
+                SizedBox(width: 80, child: logoTB),
+              ],
+            ),
+          ),
+          
+Padding(padding: const EdgeInsets.all(100), 
 
+
+
+
+
+child: CircleAvatar(
+       // backgroundColor: Colors.black,
+        radius: 50,
+        child: Icon(Icons.person, color: Colors.black, size: 50),
+      )
+),
+
+
+
+      
+    ],
+  ),
+    );
+   
   }
 
-
   
-
- Widget _buildTile(IconData icon, String title) {
+Widget _buildTile(IconData icon, String title) {
     return ListTile(
       leading: Icon(icon, color: Colors.black,),
       title: Text(title),
@@ -257,4 +203,3 @@ Stack(
     );
   }
 }
-

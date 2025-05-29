@@ -30,14 +30,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  shared_preferences: ^2.2.2
+  carousel_slider: ^5.0.0
   cupertino_icons: ^1.0.8
+  webview_flutter: ^4.13.0
+  webview_flutter_android: ^4.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,6 +65,10 @@ flutter:
     - assets/imagens/logoTB.png
     - assets/imagens/estrela.png
     - assets/imagens/Buddy.png
+    - assets/imagens/lavinia.jpg
+    - assets/imagens/helena.jpg
+    - assets/imagens/luana.jpg
+    - assets/imagens/maria.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
